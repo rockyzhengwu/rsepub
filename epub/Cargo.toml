@@ -1,0 +1,11 @@
+[package]
+name = "epub"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+html5ever = "0.26.0"
+markup5ever_rcdom = "0.2.0"
+thiserror = "1.0.56"
+xml5ever = "0.17.0"
+zip= { version="0.6.6", default-features = false, features = [ "deflate" ]}
