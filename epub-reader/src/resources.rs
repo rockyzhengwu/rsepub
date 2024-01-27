@@ -8,6 +8,17 @@ pub struct Resources {
 }
 
 impl Resources {
+    fn get_datatype(&self, url: &str) -> &str {
+        let sts = url.split('.');
+        let ext = sts.last().unwrap();
+        match ext {
+            "png" => "image/png",
+            "jpg" => "image/jpeg",
+            "css" => "text/css",
+            _ => "",
+        }
+    }
+
     pub fn add_resource(&mut self, url: &str, content: &[u8]) -> String {
         let uint8arr =
             js_sys::Uint8Array::new(&unsafe { js_sys::Uint8Array::view(content) }.into());
@@ -15,7 +26,7 @@ impl Resources {
         array.push(&uint8arr.buffer());
         let blob = Blob::new_with_u8_array_sequence_and_options(
             &array,
-            BlobPropertyBag::new().type_("image/png"),
+            BlobPropertyBag::new().type_(self.get_datatype(url)),
         )
         .unwrap();
 

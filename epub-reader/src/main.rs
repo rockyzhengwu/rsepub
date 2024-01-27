@@ -8,6 +8,8 @@ use web_sys::{Event, FileList, HtmlIFrameElement, HtmlInputElement, HtmlLinkElem
 use yew::html::Scope;
 use yew::prelude::*;
 
+use log::info;
+
 mod resources;
 use resources::Resources;
 
@@ -48,18 +50,13 @@ impl ReadingBook {
     }
 
     pub fn read_content(&mut self, name: &str) -> String {
-        let segments = name.split('/');
-        let mut segments = segments.into_iter().collect::<Vec<&str>>();
-        if !segments.is_empty() {
-            segments.pop();
-        }
-        let base = segments.join("/");
+        self.resources.clear();
         let mut content = self.book.as_mut().unwrap().content(name).unwrap();
 
-        let images = content.ralative_sources();
-        self.resources.clear();
-        for src in images {
-            let image_path = format!("{}/{}", base, src);
+        let res = content.ralative_sources().unwrap();
+        for url in res {
+            let image_path = url;
+
             let data = self
                 .book
                 .as_mut()
@@ -70,6 +67,7 @@ impl ReadingBook {
             let dest_url = self
                 .resources
                 .add_resource(image_path.as_str(), data.as_slice());
+            info!("{:?},{:?}",image_path, dest_url);
             content.update_image_url(image_path.as_str(), dest_url.as_str());
         }
         content.to_string().unwrap()
@@ -275,6 +273,6 @@ impl App {
 }
 
 fn main() {
-    wasm_logger::init(wasm_logger::Config::new(log::Level::Warn));
+    wasm_logger::init(wasm_logger::Config::new(log::Level::Info));
     yew::Renderer::<App>::new().render();
 }

@@ -15,6 +15,8 @@ pub enum EpubError {
     ParseError(String),
     #[error("ForatError: `{0}`")]
     FormatError(String),
+    #[error("UrlError: `{0}`")]
+    UrlError(String),
 }
 
 pub type Result<T> = std::result::Result<T, EpubError>;

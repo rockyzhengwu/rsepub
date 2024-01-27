@@ -144,7 +144,7 @@ impl Reader {
 
     pub fn read_content(&mut self, href: &str) -> Result<Content> {
         let buf = self.inner.readfile(href)?;
-        Content::new(buf.as_slice())
+        Content::new(href, buf.as_slice())
     }
 
     pub fn read_binary(&mut self, href: &str) -> Result<Vec<u8>> {

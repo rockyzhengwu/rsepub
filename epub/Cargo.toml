@@ -7,5 +7,6 @@ edition = "2021"
 html5ever = "0.26.0"
 markup5ever_rcdom = "0.2.0"
 thiserror = "1.0.56"
+url = "2.5.0"
 xml5ever = "0.17.0"
 zip= { version="0.6.6", default-features = false, features = [ "deflate" ]}
