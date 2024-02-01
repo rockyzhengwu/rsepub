@@ -6,10 +6,7 @@ use web_sys::{Event, FileList, HtmlIFrameElement, HtmlInputElement, HtmlLinkElem
 use yew::html::Scope;
 use yew::prelude::*;
 
-
-
 use epub_reader::book::ReadingBook;
-
 
 pub struct App {
     book: ReadingBook,
