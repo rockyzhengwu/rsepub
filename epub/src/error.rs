@@ -17,6 +17,8 @@ pub enum EpubError {
     FormatError(String),
     #[error("UrlError: `{0}`")]
     UrlError(String),
+    #[error("CfiError:`{0}`")]
+    CfiError(String),
 }
 
 pub type Result<T> = std::result::Result<T, EpubError>;
