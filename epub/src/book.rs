@@ -52,9 +52,8 @@ impl Book {
         })
     }
 
-    pub fn open_from_file(path: &str) -> Result<Book> {
-        let path = Path::new(path).to_path_buf();
-        let reader = Reader::new_from_path(path)?;
+    pub fn open_from_file<T: AsRef<Path>>(path: T) -> Result<Book> {
+        let reader = Reader::new_from_path(path.as_ref().into())?;
         Book::new_book(reader)
     }
 
@@ -89,5 +88,34 @@ impl Book {
         self.reader.read_binary(name)
     }
 
-    // 可以创建 Epub Book, 构造 navigation, 和 content, 写压缩到 epub 文件
+    pub fn chapters(&mut self) -> PageIterator {
+        PageIterator::new(self)
+    }
+}
+
+pub struct PageIterator<'a> {
+    book: &'a mut Book,
+    current_chapter: u32,
+}
+
+impl<'a> PageIterator<'a> {
+    pub fn new(book: &'a mut Book) -> Self {
+        PageIterator {
+            book,
+            current_chapter: 0,
+        }
+    }
+}
+
+impl<'a> Iterator for PageIterator<'a> {
+    type Item = Content;
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some(item) = self.book.package.chapter(self.current_chapter) {
+            let content = self.book.content(item.href()).unwrap();
+            self.current_chapter += 1;
+            Some(content)
+        } else {
+            None
+        }
+    }
 }

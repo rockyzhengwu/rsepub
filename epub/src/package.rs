@@ -62,7 +62,7 @@ impl MetaData {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 #[allow(dead_code)]
 pub struct ManifestItem {
     id: String,
@@ -94,6 +94,10 @@ impl ManifestItem {
     pub fn href(&self) -> &str {
         &self.href
     }
+
+    pub fn media_type(&self) -> &str {
+        &self.media_type
+    }
 }
 
 #[derive(Debug, Default)]
@@ -117,6 +121,13 @@ impl ItemRef {
             linear,
             properties,
         })
+    }
+
+    pub fn idref(&self) -> &str {
+        &self.idref
+    }
+    pub fn id(&self) -> &Option<String> {
+        &self.id
     }
 }
 
@@ -211,5 +222,13 @@ impl Package {
 
     pub fn get_manifest(&self, name: &str) -> Option<&ManifestItem> {
         self.manifest.get(name)
+    }
+
+    pub fn manifest(&self) -> &HashMap<String, ManifestItem> {
+        &self.manifest
+    }
+
+    pub fn chapter(&self, n: u32) -> Option<ManifestItem> {
+        unimplemented!()
     }
 }
