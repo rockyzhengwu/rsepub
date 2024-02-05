@@ -228,7 +228,10 @@ impl Package {
         &self.manifest
     }
 
-    pub fn chapter(&self, n: u32) -> Option<ManifestItem> {
-        unimplemented!()
+    pub fn chapter(&self, n: usize) -> Option<ManifestItem> {
+        if let Some(sp) = self.spine().get(n) {
+            return self.manifest.get(sp.idref()).map(|v| v.to_owned());
+        }
+        None
     }
 }

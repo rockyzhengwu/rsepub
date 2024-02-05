@@ -100,4 +100,8 @@ impl Content {
     pub fn to_string(&self) -> Result<String> {
         self.doc.to_string()
     }
+
+    pub fn doc(&self) -> &XMLDocument {
+        &self.doc
+    }
 }

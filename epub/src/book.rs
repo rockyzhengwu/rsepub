@@ -1,5 +1,6 @@
 use std::path::Path;
 
+use crate::chapter::Chapter;
 use crate::container::Container;
 use crate::content::Content;
 use crate::error::Result;
@@ -95,7 +96,7 @@ impl Book {
 
 pub struct PageIterator<'a> {
     book: &'a mut Book,
-    current_chapter: u32,
+    current_chapter: usize,
 }
 
 impl<'a> PageIterator<'a> {
@@ -108,12 +109,13 @@ impl<'a> PageIterator<'a> {
 }
 
 impl<'a> Iterator for PageIterator<'a> {
-    type Item = Content;
+    type Item = Chapter;
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(item) = self.book.package.chapter(self.current_chapter) {
             let content = self.book.content(item.href()).unwrap();
+            let chapter = Chapter::new(self.current_chapter, item.href(), content);
             self.current_chapter += 1;
-            Some(content)
+            Some(chapter)
         } else {
             None
         }
