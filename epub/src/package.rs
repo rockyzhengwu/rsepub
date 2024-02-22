@@ -151,7 +151,6 @@ impl Reference {
 #[allow(dead_code)]
 pub struct Package {
     path: String,
-    doc: XMLDocument,
     metadata: MetaData,
     manifest: HashMap<String, ManifestItem>,
     guide: Vec<Reference>,
@@ -205,7 +204,6 @@ impl Package {
             manifest,
             spine,
             guide,
-            doc,
         })
     }
 

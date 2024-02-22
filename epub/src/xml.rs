@@ -12,6 +12,7 @@ pub struct XMLDocument {
     dom: RcDom,
 }
 
+
 impl XMLDocument {
     pub fn try_new(content: &[u8]) -> Result<Self> {
         let mut reader = std::io::BufReader::new(content);
