@@ -3,7 +3,7 @@ use std::path::Path;
 use crate::chapter::Chapter;
 use crate::container::Container;
 use crate::content::Content;
-use crate::error::Result;
+use crate::error::{EpubError, Result};
 use crate::nav::Navigation;
 use crate::package::Package;
 use crate::reader::Reader;
@@ -20,7 +20,9 @@ pub struct Book {
 impl Book {
     fn new_book(mut reader: Reader) -> Result<Book> {
         let container = reader.read_meta_container()?;
-        let fullpath = container.full_path()?;
+        let fullpath = container
+            .full_path()
+            .ok_or(EpubError::ReaderError("full path not exists".to_string()))?;
         let package = reader.read_package(fullpath.as_str())?;
         let fp = Path::new(fullpath.as_str()).parent();
         let prefix = match fp {

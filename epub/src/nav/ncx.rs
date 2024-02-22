@@ -3,7 +3,7 @@ use std::rc::Rc;
 use markup5ever_rcdom::Node;
 
 use crate::error::{EpubError, Result};
-use crate::nav::{NavItem, Navigation};
+use crate::nav::{NavItem, Navigation, parse_title};
 use crate::xml::{self, XMLDocument};
 
 pub fn parse_toc(node: &Rc<Node>) -> Result<Vec<NavItem>> {
@@ -41,9 +41,10 @@ pub fn parse_toc_item(node: &Rc<Node>) -> Result<NavItem> {
 
 pub fn parse(content: &[u8]) -> Result<Navigation> {
     let doc = XMLDocument::try_new(content)?;
+    let title = parse_title(&doc);
     let mut toc = Vec::new();
     if let Some(root) = doc.find_tag("navMap") {
         toc = parse_toc(&root)?;
     }
-    Ok(Navigation { doc, toc })
+    Ok(Navigation { title, toc })
 }

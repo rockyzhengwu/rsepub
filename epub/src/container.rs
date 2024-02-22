@@ -16,52 +16,59 @@ impl RootFile {
 }
 
 pub(crate) struct Container {
-    doc: XMLDocument,
+    version: String,
+    root_files: Vec<RootFile>,
+}
+
+fn parse_root_files(doc: &XMLDocument) -> Result<Vec<RootFile>> {
+    let rootfiles = doc.find_all_tag("rootfile");
+    let mut files = Vec::new();
+    for rootfile in rootfiles {
+        let full_path = xml::parse_attribute_must_exist(&rootfile, "full-path")?;
+        let media_type = xml::parse_attribute_must_exist(&rootfile, "media-type")?;
+        if media_type != "application/oebps-package+xml" {
+            return Err(EpubError::FormatError(
+                "media_type must be applicatioin/oebps-package+xml".to_string(),
+            ));
+        }
+        files.push(RootFile {
+            full_path,
+            media_type,
+        })
+    }
+    Ok(files)
+}
+
+fn parse_version(doc: &XMLDocument) -> Result<String> {
+    let container = doc.find_tag("container").ok_or(EpubError::ContainerError(
+        "container not in container.xml file".to_string(),
+    ))?;
+    xml::parse_attribute_must_exist(&container, "version")
 }
 
 impl Container {
     pub fn new(content: &[u8]) -> Result<Self> {
         let doc = XMLDocument::try_new(content)?;
-        Ok(Container { doc })
+        let version = parse_version(&doc)?;
+        let root_files = parse_root_files(&doc)?;
+        Ok(Container {
+            version,
+            root_files,
+        })
     }
 
-    pub fn full_path(&self) -> Result<String> {
-        let rootfiles = self.root_files()?;
-        Ok(rootfiles[0].full_path().to_string())
-    }
-
-    pub fn root_files(&self) -> Result<Vec<RootFile>> {
-        let rootfiles = self.doc.find_all_tag("rootfile");
-        let mut files = Vec::new();
-        for rootfile in rootfiles {
-            let full_path = xml::parse_attribute_must_exist(&rootfile, "full-path")?;
-            let media_type = xml::parse_attribute_must_exist(&rootfile, "media-type")?;
-            if media_type != "application/oebps-package+xml" {
-                return Err(EpubError::FormatError(
-                    "media_type must be applicatioin/oebps-package+xml".to_string(),
-                ));
-            }
-            files.push(RootFile {
-                full_path,
-                media_type,
-            })
+    pub fn full_path(&self) -> Option<String> {
+        if self.root_files.is_empty() {
+            return None;
         }
-        Ok(files)
+        Some(self.root_files().first().unwrap().full_path().to_string())
     }
 
-    #[allow(dead_code)]
-    pub fn version(&self) -> Result<String> {
-        let container = self
-            .doc
-            .find_tag("container")
-            .ok_or(EpubError::ContainerError(
-                "container not in container.xml file".to_string(),
-            ))?;
-        xml::parse_attribute_must_exist(&container, "version")
+    pub fn root_files(&self) -> &[RootFile] {
+        self.root_files.as_slice()
     }
 
-    #[allow(dead_code)]
-    pub fn to_string(&self) -> Result<String> {
-        self.doc.to_string()
+    pub fn version(&self) -> &str {
+        &self.version
     }
 }

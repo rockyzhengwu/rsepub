@@ -3,7 +3,7 @@ use std::rc::Rc;
 use markup5ever_rcdom::Node;
 
 use crate::error::Result;
-use crate::nav::{NavItem, Navigation};
+use crate::nav::{NavItem, Navigation, parse_title};
 use crate::xml::{self, XMLDocument};
 
 fn parse_toc(node: &Rc<Node>) -> Vec<NavItem> {
@@ -42,6 +42,7 @@ fn parse_nav_ol(node: &Rc<Node>) -> Vec<NavItem> {
 
 pub fn parse(content: &[u8]) -> Result<Navigation> {
     let doc = XMLDocument::try_new(content)?;
+    let title = parse_title(&doc);
     let mut toc = Vec::new();
     for nav in doc.find_all_tag("nav") {
         if let Some(ty) = xml::parse_attribute(&nav, "type") {
@@ -50,5 +51,5 @@ pub fn parse(content: &[u8]) -> Result<Navigation> {
             }
         }
     }
-    Ok(Navigation { doc, toc })
+    Ok(Navigation { title, toc })
 }

@@ -23,7 +23,7 @@ impl NavItem {
 }
 
 pub struct Navigation {
-    doc: XMLDocument,
+    title: String,
     toc: Vec<NavItem>,
 }
 
@@ -36,14 +36,18 @@ impl Navigation {
         ncx::parse(content)
     }
 
-    pub fn title(&self) -> String {
-        match self.doc.find_tag("title") {
-            Some(tl) => xml::parse_text(&tl),
-            None => "".to_string(),
-        }
+    pub fn title(&self) -> &str {
+        self.title.as_str()
     }
 
     pub fn toc(&self) -> &[NavItem] {
         self.toc.as_slice()
+    }
+}
+
+fn parse_title(doc: &XMLDocument) -> String {
+    match doc.find_tag("title") {
+        Some(tl) => xml::parse_text(&tl),
+        None => String::from(""),
     }
 }
