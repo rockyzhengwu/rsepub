@@ -3,7 +3,7 @@ use std::rc::Rc;
 use markup5ever_rcdom::Node;
 
 use crate::error::Result;
-use crate::nav::{NavItem, Navigation, parse_title};
+use crate::nav::{parse_title, NavItem, Navigation};
 use crate::xml::{self, XMLDocument};
 
 fn parse_toc(node: &Rc<Node>) -> Vec<NavItem> {
