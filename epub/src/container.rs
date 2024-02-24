@@ -1,3 +1,5 @@
+use std::borrow::Borrow;
+
 use crate::error::EpubError;
 use crate::error::Result;
 use crate::xml::{self, XMLDocument};
@@ -68,7 +70,8 @@ impl Container {
         self.root_files.as_slice()
     }
 
+    #[allow(dead_code)]
     pub fn version(&self) -> &str {
-        &self.version
+        self.version.borrow()
     }
 }
