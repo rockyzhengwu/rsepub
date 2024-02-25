@@ -30,3 +30,6 @@ yew = { git = "https://github.com/yewstack/yew/", features = ["csr"] }
 epub = { path = "../epub/" }
 flate2 = "1.0.28"
 url = "2.5.0"
+markup5ever_rcdom = "0.2.0"
+xml5ever = "0.17.0"
+anyhow = "1.0.80"

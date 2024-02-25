@@ -2,7 +2,6 @@ use std::path::Path;
 
 use crate::chapter::Chapter;
 use crate::container::Container;
-use crate::content::Content;
 use crate::error::{EpubError, Result};
 use crate::nav::Navigation;
 use crate::package::Package;
@@ -81,10 +80,13 @@ impl Book {
         self.package.title()
     }
 
-    pub fn content(&mut self, name: &str) -> Result<Content> {
+    pub fn resolve_path(&self, name: &str) -> String {
         let path = Path::new(self.rootdir.as_str()).join(name);
-        let p = path.to_string_lossy().to_string();
-        self.reader.read_content(p.as_str())
+        path.to_string_lossy().to_string()
+    }
+
+    pub fn content(&mut self, path: &str) -> Result<String> {
+        self.reader.read_content(path)
     }
 
     pub fn read_binary_file(&mut self, name: &str) -> Result<Vec<u8>> {

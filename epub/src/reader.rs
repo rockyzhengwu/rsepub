@@ -4,7 +4,6 @@ use std::path::PathBuf;
 use zip::read::ZipArchive;
 
 use crate::container::Container;
-use crate::content::Content;
 use crate::error::{EpubError, Result};
 use crate::nav::Navigation;
 use crate::package::Package;
@@ -142,9 +141,10 @@ impl Reader {
         Navigation::new_from_ncx(content.as_slice())
     }
 
-    pub fn read_content(&mut self, href: &str) -> Result<Content> {
+    pub fn read_content(&mut self, href: &str) -> Result<String> {
         let buf = self.inner.readfile(href)?;
-        Content::new(href, buf.as_slice())
+        // TODO fix unwrap
+        Ok(String::from_utf8(buf).unwrap())
     }
 
     pub fn read_binary(&mut self, href: &str) -> Result<Vec<u8>> {

@@ -8,4 +8,6 @@ fn main() {
     for chapter in doc.chapters() {
         println!("chapter: {}, {}", chapter.index(), chapter.href());
     }
+    let path = doc.resolve_path("feed_20/article_0/index_u6.html");
+    println!("{:?}", path);
 }

@@ -1,8 +1,10 @@
 use epub::book::Book;
 use epub::nav::NavItem;
+use epub::xml::XMLDocument;
 
 use log::info;
 
+use crate::content::{relative_resources, update_image_url};
 use crate::resources::Resources;
 
 #[derive(Default)]
@@ -43,12 +45,18 @@ impl ReadingBook {
 
     pub fn read_content(&mut self, name: &str) -> String {
         self.resources.clear();
-        let mut content = self.book.as_mut().unwrap().content(name).unwrap();
+        let path = self.book.as_mut().unwrap().resolve_path(name);
+        let content = self.book.as_mut().unwrap().content(&path).unwrap();
+        self.preprocess_content(content, &path)
+    }
 
-        let res = content.ralative_sources().unwrap();
+    pub fn create_resources(&mut self) {}
+
+    pub fn preprocess_content(&mut self, content: String, base: &str) -> String {
+        let doc = XMLDocument::try_new(content.as_bytes()).unwrap();
+        let res = relative_resources(&doc, base).unwrap();
         for url in res {
             let image_path = url;
-
             let data = self
                 .book
                 .as_mut()
@@ -60,10 +68,8 @@ impl ReadingBook {
                 .resources
                 .add_resource(image_path.as_str(), data.as_slice());
             info!("{:?},{:?}", image_path, dest_url);
-            content.update_image_url(image_path.as_str(), dest_url.as_str());
+            update_image_url(&doc, image_path.as_str(), dest_url.as_str());
         }
-        content.to_string().unwrap()
+        doc.to_string().unwrap()
     }
-
-    pub fn create_resources(&mut self) {}
 }

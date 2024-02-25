@@ -1,13 +1,11 @@
-use crate::content::Content;
-
 pub struct Chapter {
     index: usize,
     href: String,
-    content: Content,
+    content: String,
 }
 
 impl Chapter {
-    pub fn new(index: usize, href: &str, content: Content) -> Self {
+    pub fn new(index: usize, href: &str, content: String) -> Self {
         Chapter {
             index,
             href: href.to_string(),
@@ -23,7 +21,7 @@ impl Chapter {
         self.href.as_str()
     }
 
-    pub fn content(&self) -> &Content {
-        &self.content
+    pub fn content(&self) -> &str {
+        self.content.as_str()
     }
 }
